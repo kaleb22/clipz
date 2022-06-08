@@ -10,7 +10,9 @@ export class ModalComponent implements OnInit {
 
   constructor(public modal: ModalService) { }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void { }
 
+  closeModal() {
+    this.modal.toogleModal();
+  }
 }
