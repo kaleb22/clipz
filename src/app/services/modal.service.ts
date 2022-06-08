@@ -12,7 +12,7 @@ export class ModalService {
     return this.visible;
   }
 
-  toogleModal() {
+  tooggleModal() {
     this.visible = !this.visible;
   }
 }
