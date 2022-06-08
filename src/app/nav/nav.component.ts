@@ -16,7 +16,7 @@ export class NavComponent implements OnInit {
   openModal($event: Event) {
     $event.preventDefault(); // it will not allow the anchor to be executed (href)
 
-    this.modal.tooggleModal();
+    this.modal.tooggleModal('auth');
   }
 
 }
