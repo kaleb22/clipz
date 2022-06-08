@@ -13,7 +13,6 @@ export class TabsContainerComponent implements AfterContentInit {
   @ContentChildren(TabComponent) tabs: QueryList<TabComponent> = new QueryList();
 
   ngAfterContentInit(): void {
-    console.log(this.tabs)
   }
 
 }
