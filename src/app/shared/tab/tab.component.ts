@@ -10,8 +10,8 @@ export class TabComponent implements OnInit {
   constructor() { }
 
   @Input() tabTitle = '';
+  @Input() active = false;
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void { }
 
 }
