@@ -11,6 +11,8 @@ export class InputComponent implements OnInit {
   constructor() { }
 
   @Input() control: FormControl = new FormControl();
+  @Input() type = 'text';
+  @Input() placeholder = '';
 
   ngOnInit(): void {
   }
