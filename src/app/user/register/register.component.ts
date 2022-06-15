@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { FirebaseError } from '@angular/fire/app';
 
 @Component({
   selector: 'app-register',
@@ -7,6 +9,10 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent {
+
+  constructor(private auth: AngularFireAuth) { }
+
+  inSubmission = false;
   showAlert = false;
   alertMessage = 'Please wait, your account is being created.'
   alertColor = 'blue';
@@ -46,9 +52,34 @@ export class RegisterComponent {
     phoneNumber: this.phoneNumber
   });
 
-  register() {
+  async register() {
     this.showAlert = true;
     this.alertMessage = 'Please wait, your account is being created.'
     this.alertColor = 'blue';
+    this.inSubmission = true;
+
+    //using destruction syntax
+    const { email, password } = this.registerForm.value;
+
+    try {
+      //using ! (not null operator) to ensure typescript that email and password will always be string.
+      const userCredential = await this.auth.createUserWithEmailAndPassword(email!, password!);
+      console.log(userCredential);
+    } catch (err) {
+      console.error(err);
+
+      if( err instanceof FirebaseError) {
+        this.alertMessage = err.message;  
+      } else {
+        this.alertMessage = 'An unexpected error ocurred. Please try again later';
+      }
+
+      this.alertColor = 'red';
+      this.inSubmission = false;
+      return
+    }
+
+    this.alertMessage = 'Sucess!! Your account has been created';
+    this.alertColor = 'green';
   }
 }
