@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { FirebaseError } from '@angular/fire/app';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import IUser from 'src/app/modals/user.modal';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -11,8 +11,7 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 })
 export class RegisterComponent {
 
-  //injecting angularFire services
-  constructor(private auth: AngularFireAuth, private db: AngularFirestore) { }
+  constructor(private auth: AuthService) { }
 
   inSubmission = false;
   showAlert = false;
@@ -27,7 +26,7 @@ export class RegisterComponent {
     Validators.required,
     Validators.email
   ]);
-  age = new FormControl('', [
+  age = new FormControl<number | null>(null, [
     Validators.required,
     Validators.min(18),
     Validators.max(120)
@@ -60,22 +59,8 @@ export class RegisterComponent {
     this.alertColor = 'blue';
     this.inSubmission = true;
 
-    //using destruction syntax
-    const { email, password } = this.registerForm.value;
-
     try {
-      //using ! (not null operator) to ensure typescript that email and password will always be string.
-      const userCredential = await this.auth.createUserWithEmailAndPassword(email!, password!);
-      console.log(userCredential);
-      
-      await this.db.collection('users').add({
-        name: this.name.value,
-        email: this.email.value,
-        age: this.age.value,
-        phoneNumber: this.phoneNumber.value
-      });
-
-
+      await this.auth.createUser(this.registerForm.value as IUser);
     } catch (err) {
       console.error(err);
 
