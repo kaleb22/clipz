@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { FirebaseError } from '@angular/fire/app';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 
 @Component({
   selector: 'app-register',
@@ -10,7 +11,8 @@ import { FirebaseError } from '@angular/fire/app';
 })
 export class RegisterComponent {
 
-  constructor(private auth: AngularFireAuth) { }
+  //injecting angularFire services
+  constructor(private auth: AngularFireAuth, private db: AngularFirestore) { }
 
   inSubmission = false;
   showAlert = false;
@@ -65,6 +67,15 @@ export class RegisterComponent {
       //using ! (not null operator) to ensure typescript that email and password will always be string.
       const userCredential = await this.auth.createUserWithEmailAndPassword(email!, password!);
       console.log(userCredential);
+      
+      await this.db.collection('users').add({
+        name: this.name.value,
+        email: this.email.value,
+        age: this.age.value,
+        phoneNumber: this.phoneNumber.value
+      });
+
+
     } catch (err) {
       console.error(err);
 
