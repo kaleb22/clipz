@@ -3,6 +3,7 @@ import { FirebaseError } from '@angular/fire/app';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import IUser from 'src/app/modals/user.modal';
 import { AuthService } from 'src/app/services/auth.service';
+import { RegisterValidators } from '../validators/register-validators';
 
 @Component({
   selector: 'app-register',
@@ -51,7 +52,7 @@ export class RegisterComponent {
     password: this.password,
     confirmPassword: this.confirmPassword,
     phoneNumber: this.phoneNumber
-  });
+  }, [RegisterValidators.match]);
 
   async register() {
     this.showAlert = true;
