@@ -1,24 +1,41 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { FirebaseError } from '@angular/fire/app';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
 
-  constructor() { }
+  constructor(private auth: AngularFireAuth) { }
 
   credentials = {
     email: '',
     password: ''
   }
 
-  ngOnInit(): void {
-  }
+  inSubmission = false;
+  showAlert = false;
+  alertMessage = 'Please wait, trying to signing you in.'
+  alertColor = 'blue';
 
-  signIn(): void {
-    console.log(this.credentials);
-  }
+  async signIn() {
+    this.inSubmission = true;
+    this.showAlert = true;
 
+    try {
+     await this.auth.signInWithEmailAndPassword(this.credentials.email, this.credentials.password);
+    } catch (err) {
+      this.alertMessage = 'Your credentials are invalid. Try again.';
+
+      this.alertColor = 'red';
+      this.inSubmission = false;
+      return
+    }
+
+    this.alertMessage = 'Sucess!! You sucessfully logged in.';
+    this.alertColor = 'green';
+  }
 }
