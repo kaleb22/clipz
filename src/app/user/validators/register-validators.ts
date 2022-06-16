@@ -4,16 +4,18 @@ export class RegisterValidators {
 
   static match(controlName: string, matchingControlName: string): ValidatorFn {
     return (group: AbstractControl): ValidationErrors | null => {
-      const passwordControl = group.get(controlName);
-      const confirmPasswordControl = group.get(matchingControlName);
+      const control = group.get(controlName);
+      const matchingControl = group.get(matchingControlName);
   
-      if(!passwordControl || !confirmPasswordControl) {
+      if(!control || !matchingControl) {
+        console.error('Form controls cannot be found in the group');
         return {
           controlNotFound: false
         }
       }
-  
-      return passwordControl.value === confirmPasswordControl.value ? null : { noMatch: true }
+      const error = control.value === matchingControl.value ? null : { noMatch: true }
+      matchingControl.setErrors(error);
+      return error;
     }
   }
 }
