@@ -9,7 +9,13 @@ export class UploadComponent implements OnInit {
 
   constructor() { }
 
+  isDragOver = false;
+
   ngOnInit(): void {
+  }
+
+  storeFile($event: Event) {
+    this.isDragOver = false;
   }
 
 }
