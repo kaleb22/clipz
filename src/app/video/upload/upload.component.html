@@ -4,6 +4,7 @@
 
     <!-- Upload Dropbox -->
     <div app-event-blocker
+      *ngIf="hideForm; else uploadFormContainer"
       (dragover)="isDragOver = true"
       (dragenter)="isDragOver = true"
       (dragend)="isDragOver = false"
@@ -18,8 +19,7 @@
     </div>
 
     <!-- Video Editor -->
-    <div>
-
+    <ng-template #uploadFormContainer>
       <!-- Form -->
       <form>
         <!-- Screenshots -->
@@ -49,6 +49,6 @@
           </button>
         </div>
       </form>
-    </div>
+    </ng-template>
   </div>
 </section>
