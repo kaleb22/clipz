@@ -101,6 +101,10 @@ export class UploadComponent implements OnInit {
         this.alertMsg = 'File successfully uploaded';
         this.showPercentage = false;
         this.inSubmission = true;
+
+        setTimeout(() => {
+          this.hideForm = true;
+        }, 2000);
       },
       error: (err) => {
         this.alertColor = 'red';
