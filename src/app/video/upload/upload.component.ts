@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { v4 as uuid } from 'uuid';
+import { last, switchMap } from 'rxjs';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import firebase from 'firebase/compat/app';
 
 @Component({
   selector: 'app-upload',
@@ -10,11 +13,20 @@ import { v4 as uuid } from 'uuid';
 })
 export class UploadComponent implements OnInit {
 
-  constructor(private storage: AngularFireStorage) { }
+  constructor(private storage: AngularFireStorage, private auth: AngularFireAuth) {
+    auth.user.subscribe(user => this.user = user)
+   }
 
   isDragOver = false;
   file: File | null = null;
   hideForm = true;
+  showAlert = false;
+  alertMsg = 'Please wait, your file is beeing uploaded.'
+  alertColor = 'blue';
+  inSubmission = false;
+  percentage = 0;
+  showPercentage = false;
+  user: firebase.User | null = null;
 
   title = new FormControl('', {
     validators: [
@@ -32,6 +44,10 @@ export class UploadComponent implements OnInit {
   }
 
   storeFile($event: Event) {
+    this.showAlert = false;
+    this.alertMsg = 'Please wait, your file is beeing uploaded.'
+    this.alertColor = 'blue';
+
     this.isDragOver = false;
 
     this.file = ($event as DragEvent).dataTransfer?.files.item(0) ?? null; // ?? - nullish operator. if undefined it will return null
@@ -46,9 +62,48 @@ export class UploadComponent implements OnInit {
   }
 
   uploadFile() {
+    this.showAlert = true;
+    this.alertMsg = 'Please wait, your file is beeing uploaded.'
+    this.alertColor = 'blue';
+    this.inSubmission = true;
+    this.showPercentage = true;
+    
     const clipFileName = uuid();
     const clipPath = `clips/${clipFileName}.mp4`;
     
-    this.storage.upload(clipPath, this.file);
+    const task = this.storage.upload(clipPath, this.file);
+    const clipRef = this.storage.ref(clipPath);
+
+    task.percentageChanges().subscribe(progress => {
+      this.percentage = progress as number / 100;
+    });
+
+    task.snapshotChanges().pipe(
+      last(),
+      switchMap(() => clipRef.getDownloadURL()) //getDownload returns an observable which will be subscribed by switchMap.
+    ).subscribe({                               //the snapshot from last() will be lose
+      next: (url) => {
+        const clip = {
+          uid: this.user?.uid,
+          displayName: this.user?.displayName,
+          title: this.title.value,
+          fileName: `${clipFileName}.mp4`,
+          url
+        }
+        this.alertColor = 'green';
+        this.alertMsg = 'File successfully uploaded';
+        this.showPercentage = false;
+        this.inSubmission = true;
+      },
+      error: (err) => {
+        this.alertColor = 'red';
+        this.alertMsg = 'An unexpected error ocurred. Please, try again later';
+        this.inSubmission = false;
+        this.showPercentage = false;
+        console.error(err);
+      }
+    });
+
+
   }
 }
