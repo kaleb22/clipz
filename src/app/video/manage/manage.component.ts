@@ -20,6 +20,7 @@ export class ManageComponent implements OnInit {
 
   videoOrder = 'd'; // descending asceding
   clips: IClip[] = [];
+  activeClip: IClip | null = null;
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe( (params: Params) => {
@@ -47,6 +48,7 @@ export class ManageComponent implements OnInit {
   openModal($event: Event, clip: IClip) {
     $event.preventDefault();
 
+    this.activeClip = clip;
     this.modal.tooggleModal('editClip');
   }
 
