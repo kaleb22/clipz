@@ -54,7 +54,9 @@ export class UploadComponent implements OnInit {
 
     this.isDragOver = false;
 
-    this.file = ($event as DragEvent).dataTransfer?.files.item(0) ?? null; // ?? - nullish operator. if undefined it will return null
+    this.file = ($event as DragEvent).dataTransfer ?
+      ($event as DragEvent).dataTransfer?.files.item(0) ?? null : // ?? - nullish operator. if undefined it will return null
+      ($event.target as HTMLInputElement).files?.item(0) ?? null;
 
     if(!this.file || this.file.type !== 'video/mp4') {
       return;
