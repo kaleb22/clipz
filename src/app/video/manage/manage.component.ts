@@ -12,6 +12,11 @@ import { BehaviorSubject } from 'rxjs';
   styleUrls: ['./manage.component.scss']
 })
 export class ManageComponent implements OnInit {
+  
+  videoOrder = 'd'; // descending asceding
+  clips: IClip[] = [];
+  activeClip: IClip | null = null;
+  sort$: BehaviorSubject<string>;
 
   constructor(
     private router: Router, 
@@ -22,14 +27,10 @@ export class ManageComponent implements OnInit {
       this.sort$ = new BehaviorSubject(this.videoOrder);
      }
 
-  videoOrder = 'd'; // descending asceding
-  clips: IClip[] = [];
-  activeClip: IClip | null = null;
-  sort$: BehaviorSubject<string>;
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe( (params: Params) => {
-      this.videoOrder = params.sort === 'a' ? params.sort : 'd';
+      this.videoOrder = params.sort === 'd' ? params.sort : 'a';
       this.sort$.next(this.videoOrder);
     });
 
@@ -47,8 +48,8 @@ export class ManageComponent implements OnInit {
 
   sort(event: Event): void {
     const { value } = ( event.target as HTMLSelectElement );
-
-    this.router.navigateByUrl(`/manage?sort=${value}`);
+    this.sort$.next(value);
+    //this.router.navigateByUrl(`/manage?sort=${value}`);
   }
 
   openModal($event: Event, clip: IClip) {
