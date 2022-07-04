@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ClipService } from 'src/app/services/clip.service';
 import IClip from 'src/app/modals/clip.modal';
 import { ModalService } from 'src/app/services/modal.service';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-manage',
@@ -16,18 +17,23 @@ export class ManageComponent implements OnInit {
     private router: Router, 
     private route: ActivatedRoute, 
     private clipService: ClipService,
-    private modal: ModalService) { }
+    private modal: ModalService
+  ) {
+      this.sort$ = new BehaviorSubject(this.videoOrder);
+     }
 
   videoOrder = 'd'; // descending asceding
   clips: IClip[] = [];
   activeClip: IClip | null = null;
+  sort$: BehaviorSubject<string>;
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe( (params: Params) => {
       this.videoOrder = params.sort === 'a' ? params.sort : 'd';
+      this.sort$.next(this.videoOrder);
     });
 
-    this.clipService.getUserClips().subscribe(docsList => {
+    this.clipService.getUserClips(this.sort$).subscribe(docsList => {
       this.clips = [];
 
       docsList.forEach(doc => {
