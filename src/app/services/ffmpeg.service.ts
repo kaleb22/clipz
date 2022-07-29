@@ -29,7 +29,7 @@ export class FfmpegService {
 
     this.ffmpeg.FS('writeFile', file.name, data);
 
-    const seconds = [0];
+    const seconds = [0, 1];
     const commands: string[] = []
 
     seconds.forEach(second => {
