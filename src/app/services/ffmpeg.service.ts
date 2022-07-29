@@ -28,7 +28,7 @@ export class FfmpegService {
 
     this.ffmpeg.FS('writeFile', file.name, data);
 
-    const seconds = [1, 2, 3];
+    const seconds = [0];
     const commands: string[] = []
 
     seconds.forEach(second => {
@@ -44,6 +44,22 @@ export class FfmpegService {
     await this.ffmpeg.run(
       ...commands
     );
+
+    const screnshots: string[] = [];
+
+    seconds.forEach(second => {
+      const screenShotFile = this.ffmpeg.FS('readFile', `output_0${second}.png`)
+      const screenShotBlob = new Blob(
+        [screenShotFile.buffer], {
+          type: 'image/png'
+        }
+      )
+
+      const screenShotURL = URL.createObjectURL(screenShotBlob);
+      screnshots.push(screenShotURL);
+    })
+
+    return screnshots;
   }
 
     // input
