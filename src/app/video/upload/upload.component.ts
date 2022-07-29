@@ -55,7 +55,7 @@ export class UploadComponent implements OnDestroy {
     this.task?.cancel();
   }
 
-  storeFile($event: Event) {
+  async storeFile($event: Event) {
     this.showAlert = false;
     this.alertMsg = 'Please wait, your file is beeing uploaded.'
     this.alertColor = 'blue';
@@ -69,6 +69,8 @@ export class UploadComponent implements OnDestroy {
     if(!this.file || this.file.type !== 'video/mp4') {
       return;
     }
+
+    this.ffmpegService.getScreenShots(this.file);
 
     this.title.setValue(this.file.name.replace(/\.[^/.]+$/, ''));
 
