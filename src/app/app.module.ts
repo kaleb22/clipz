@@ -16,6 +16,7 @@ import { VideoModule } from './video/video.module';
 import { ClipComponent } from './clip/clip.component';
 import { ErrorComponent } from './error/error.component';
 import { ClipsListComponent } from './clips-list/clips-list.component';
+import { FbTimestampPipe } from './pipes/fb-timestamp.pipe';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { ClipsListComponent } from './clips-list/clips-list.component';
     AboutComponent,
     ClipComponent,
     ErrorComponent,
-    ClipsListComponent
+    ClipsListComponent,
+    FbTimestampPipe
   ],
   imports: [
     BrowserModule,
